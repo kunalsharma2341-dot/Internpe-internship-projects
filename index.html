@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="A responsive calculator internship project built with HTML, CSS, and JavaScript.">
+  <title>Smart Calculator | Kunal Sharma</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-effects" aria-hidden="true">
+    <span class="orb orb-one"></span>
+    <span class="orb orb-two"></span>
+    <span class="orb orb-three"></span>
+  </div>
+
+  <main class="page-shell">
+    <section class="project-copy" aria-labelledby="project-title">
+      <p class="eyebrow"><span></span> Web Development Internship</p>
+      <h1 id="project-title">Smart<br><strong>Calculator</strong></h1>
+      <p class="description">
+        A clean and responsive calculator with keyboard controls, decimal support,
+        percentages, and safe error handling.
+      </p>
+
+      <ul class="feature-list" aria-label="Project features">
+        <li>Responsive interface</li>
+        <li>Keyboard enabled</li>
+        <li>Error handling</li>
+      </ul>
+
+      <div class="tech-stack" aria-label="Technologies used">
+        <span>HTML5</span>
+        <span>CSS3</span>
+        <span>JavaScript</span>
+      </div>
+
+      <p class="author">Designed &amp; developed by <strong>Kunal Sharma</strong></p>
+    </section>
+
+    <section class="calculator-card" aria-label="Smart calculator">
+      <header class="calculator-header">
+        <div class="window-controls" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p>calculator.js</p>
+        <span class="status"><i></i> Online</span>
+      </header>
+
+      <div class="display" aria-live="polite" aria-atomic="true">
+        <p class="calculation" id="calculation">Ready</p>
+        <output class="result" id="result">0</output>
+      </div>
+
+      <div class="keypad">
+        <button class="key utility" type="button" data-action="clear" title="Clear calculator">AC</button>
+        <button class="key utility" type="button" data-action="delete" aria-label="Delete last digit" title="Delete last digit">DEL</button>
+        <button class="key utility" type="button" data-action="percent" aria-label="Percentage" title="Percentage">%</button>
+        <button class="key operator" type="button" data-operation="/" aria-label="Divide" title="Divide">÷</button>
+
+        <button class="key" type="button" data-number="7">7</button>
+        <button class="key" type="button" data-number="8">8</button>
+        <button class="key" type="button" data-number="9">9</button>
+        <button class="key operator" type="button" data-operation="*" aria-label="Multiply" title="Multiply">×</button>
+
+        <button class="key" type="button" data-number="4">4</button>
+        <button class="key" type="button" data-number="5">5</button>
+        <button class="key" type="button" data-number="6">6</button>
+        <button class="key operator" type="button" data-operation="-" aria-label="Subtract" title="Subtract">−</button>
+
+        <button class="key" type="button" data-number="1">1</button>
+        <button class="key" type="button" data-number="2">2</button>
+        <button class="key" type="button" data-number="3">3</button>
+        <button class="key operator" type="button" data-operation="+" aria-label="Add" title="Add">+</button>
+
+        <button class="key utility" type="button" data-action="sign" aria-label="Change number sign" title="Change number sign">±</button>
+        <button class="key" type="button" data-number="0">0</button>
+        <button class="key" type="button" data-number="." aria-label="Decimal point">.</button>
+        <button class="key equals" id="equals-button" type="button" data-action="calculate" aria-label="Calculate answer" title="Calculate answer">=</button>
+      </div>
+
+      <p class="keyboard-tip"><kbd>Enter</kbd> calculates &nbsp;•&nbsp; <kbd>Esc</kbd> clears</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
