@@ -39,7 +39,7 @@ The calculator performs common mathematical operations and is designed to work o
 
 The source code for Task 1 is available here:
 
-[Open Task 1 – Simple Calculator](task-01-simple-calculator/)
+[View Task 1 – Simple Calculator Source Code](./)
 
 ### How to Run Task 1
 
