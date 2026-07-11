@@ -1,6 +1,6 @@
-# Internpe Web Development Internship Projects
+# InternPe Web Development Internship Projects
 
-This repository contains the tasks and projects I complete during my web development internship at Internpe.
+This repository contains the tasks and projects I complete during my web development internship at InternPe.
 
 I will continue updating this repository as new tasks are assigned and completed. Each task is stored in a separate folder so that its code and progress remain easy to understand.
 
@@ -62,7 +62,7 @@ While completing this task, I practised:
 ## Repository Structure
 
 ```text
-internpe-internship-projects/
+internPe-internship-projects/
 ├── README.md
 ├── .gitignore
 └── task-01-simple-calculator/
