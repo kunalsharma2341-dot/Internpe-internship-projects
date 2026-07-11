@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ShopNest is a responsive e-commerce internship project built with HTML, CSS, and JavaScript.">
+  <meta name="theme-color" content="#173b3f">
+  <title>ShopNest | Modern Everyday Essentials</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="ShopNest home">Shop<span>Nest</span></a>
+    <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="mainNav">☰<span class="sr-only">Open menu</span></button>
+    <nav id="mainNav" aria-label="Main navigation">
+      <a href="#home">Home</a><a href="#products">Shop</a><a href="#benefits">Why us</a><a href="#contact">Contact</a>
+    </nav>
+    <button class="cart-button" id="cartButton" type="button" aria-label="Open shopping cart">Cart <span id="cartCount">0</span></button>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow">Thoughtfully selected essentials</p>
+        <h1>Simple products.<br><em>Better everyday living.</em></h1>
+        <p>Discover practical, good-looking essentials for your desk, home and daily routine.</p>
+        <a class="primary-button" href="#products">Explore collection</a>
+      </div>
+      <div class="hero-art" aria-label="Featured reusable water bottle">
+        <div class="shape shape-one"></div><div class="shape shape-two"></div>
+        <div class="bottle"><span></span></div>
+        <p>Designed for<br><strong>your routine</strong></p>
+      </div>
+    </section>
+
+    <section class="benefits" id="benefits" aria-label="Store benefits">
+      <article><span>↗</span><div><strong>Free delivery</strong><small>On orders above ₹999</small></div></article>
+      <article><span>✓</span><div><strong>Quality checked</strong><small>Products chosen with care</small></div></article>
+      <article><span>↺</span><div><strong>Easy returns</strong><small>7-day demo policy</small></div></article>
+    </section>
+
+    <aside class="bundle-banner" aria-label="Everyday Kit bundle offer">
+      <div class="bundle-mark" aria-hidden="true">3</div>
+      <div>
+        <p class="eyebrow">Build your Everyday Kit</p>
+        <h2>Choose any 3 different products and save 10%</h2>
+        <p>No coupon needed—the discount appears automatically in your cart.</p>
+      </div>
+      <a href="#products">Start building →</a>
+    </aside>
+
+    <section class="shop-section" id="products">
+      <div class="section-heading">
+        <div><p class="eyebrow">The collection</p><h2>Shop all products</h2></div>
+        <label class="search-box"><span class="sr-only">Search products</span><input id="searchInput" type="search" placeholder="Search products…" autocomplete="off"></label>
+      </div>
+      <div class="filters" id="filters" aria-label="Product categories"></div>
+      <p class="result-count" id="resultCount" aria-live="polite"></p>
+      <div class="product-grid" id="productGrid"></div>
+      <p class="empty-state" id="emptyState" hidden>No matching products found. Try another search.</p>
+    </section>
+
+    <section class="newsletter" id="contact">
+      <div><p class="eyebrow">Stay in the loop</p><h2>Useful finds, in your inbox.</h2><p>Demo newsletter form for this internship project.</p></div>
+      <form id="newsletterForm"><label class="sr-only" for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" required><button type="submit">Subscribe</button></form>
+    </section>
+  </main>
+
+  <footer><a class="brand" href="#home">Shop<span>Nest</span></a><p>Internship project by Kunal Sharma · HTML, CSS &amp; JavaScript</p></footer>
+
+  <div class="overlay" id="overlay" hidden></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-labelledby="cartTitle" aria-hidden="true">
+    <header><div><p class="eyebrow">Your selection</p><h2 id="cartTitle">Shopping cart</h2></div><button id="closeCart" type="button" aria-label="Close cart">×</button></header>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <p class="bundle-progress" id="bundleStatus" aria-live="polite"></p>
+      <div class="discount-row" id="discountRow" hidden><span>Everyday Kit discount</span><strong id="cartDiscount">−₹0</strong></div>
+      <div><span>Total</span><strong id="cartTotal">₹0</strong></div>
+      <small>Taxes and delivery calculated at checkout</small>
+      <button class="checkout-button" id="checkoutButton" type="button">Demo checkout</button>
+    </div>
+  </aside>
+
+  <dialog id="checkoutDialog">
+    <form id="checkoutForm" method="dialog"><button class="dialog-close" value="cancel" aria-label="Close checkout">×</button><p class="eyebrow">Demo only</p><h2>Checkout details</h2><p>No payment or personal information is sent anywhere.</p><label>Full name<input name="name" required autocomplete="name"></label><label>Email<input name="email" type="email" required autocomplete="email"></label><label>Delivery address<textarea name="address" required rows="3" autocomplete="street-address"></textarea></label><button class="primary-button" value="confirm" type="submit">Place demo order</button></form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
