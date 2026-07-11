@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DayList is a responsive to-do list internship project built with HTML, CSS and JavaScript.">
+  <meta name="theme-color" content="#183d3d">
+  <title>DayList | Simple Task Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-shape shape-one" aria-hidden="true"></div>
+  <div class="background-shape shape-two" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Internship Task 3</p>
+        <h1>Day<span>List</span></h1>
+        <p class="today" id="todayText"></p>
+      </div>
+      <button class="theme-button" id="themeButton" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+        <span aria-hidden="true">◐</span>
+      </button>
+    </header>
+
+    <section class="progress-card" aria-labelledby="progressTitle">
+      <div>
+        <p class="eyebrow" id="progressTitle">Today’s progress</p>
+        <strong id="progressMessage">Start with one small task.</strong>
+      </div>
+      <div class="progress-number"><span id="completedCount">0</span>/<span id="totalCount">0</span></div>
+      <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+    </section>
+
+    <section class="task-creator" aria-labelledby="addTaskTitle">
+      <h2 id="addTaskTitle">Add a new task</h2>
+      <form id="taskForm">
+        <label class="task-input-label">
+          <span class="sr-only">Task title</span>
+          <input id="taskInput" name="task" type="text" maxlength="100" placeholder="What needs to be done?" autocomplete="off" required>
+        </label>
+
+        <div class="task-options">
+          <label>
+            <span>Category</span>
+            <select id="categoryInput" name="category">
+              <option value="Personal">Personal</option>
+              <option value="Study">Study</option>
+              <option value="Work">Work</option>
+              <option value="Health">Health</option>
+            </select>
+          </label>
+          <label>
+            <span>Priority</span>
+            <select id="priorityInput" name="priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </label>
+          <label>
+            <span>Due date</span>
+            <input id="dateInput" name="dueDate" type="date">
+          </label>
+          <button class="add-button" type="submit"><span aria-hidden="true">+</span> Add task</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="tasks-section" aria-labelledby="taskListTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Your list</p>
+          <h2 id="taskListTitle">Tasks</h2>
+        </div>
+        <label class="search-box">
+          <span class="sr-only">Search tasks</span>
+          <input id="searchInput" type="search" placeholder="Search tasks…" autocomplete="off">
+        </label>
+      </div>
+
+      <div class="toolbar">
+        <div class="filters" id="filters" aria-label="Filter tasks">
+          <button class="filter-button active" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter-button" type="button" data-filter="active" aria-pressed="false">Active</button>
+          <button class="filter-button" type="button" data-filter="completed" aria-pressed="false">Completed</button>
+        </div>
+        <select id="sortInput" aria-label="Sort tasks">
+          <option value="newest">Newest first</option>
+          <option value="due-date">Due date</option>
+          <option value="priority">Priority</option>
+        </select>
+      </div>
+
+      <p class="result-text" id="resultText" aria-live="polite"></p>
+      <ul class="task-list" id="taskList"></ul>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <div aria-hidden="true">✓</div>
+        <h3>No tasks here</h3>
+        <p>Add a task or change the current filter.</p>
+      </div>
+
+      <button class="clear-button" id="clearCompletedButton" type="button">Clear completed tasks</button>
+    </section>
+
+    <footer>
+      <p>Designed and developed by <strong>Kunal Sharma</strong></p>
+      <p>HTML · CSS · JavaScript</p>
+    </footer>
+  </main>
+
+  <dialog id="editDialog">
+    <form id="editForm" method="dialog">
+      <button class="dialog-close" type="button" id="closeDialogButton" aria-label="Close edit form">×</button>
+      <p class="eyebrow">Update task</p>
+      <h2>Edit your task</h2>
+      <input id="editTaskId" type="hidden">
+      <label>Task title<input id="editTaskInput" type="text" maxlength="100" required></label>
+      <label>Category
+        <select id="editCategoryInput">
+          <option value="Personal">Personal</option><option value="Study">Study</option><option value="Work">Work</option><option value="Health">Health</option>
+        </select>
+      </label>
+      <label>Priority
+        <select id="editPriorityInput">
+          <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option>
+        </select>
+      </label>
+      <label>Due date<input id="editDateInput" type="date"></label>
+      <button class="save-button" type="submit">Save changes</button>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
