@@ -3,86 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07111f">
-  <meta name="description" content="A responsive calculator internship project built with HTML, CSS, and JavaScript.">
-  <title>Smart Calculator | Kunal Sharma</title>
+  <meta name="description" content="A simple two-player Connect Four game developed using HTML, CSS and JavaScript.">
+  <title>Connect Four | Kunal Sharma</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="background-effects" aria-hidden="true">
-    <span class="orb orb-one"></span>
-    <span class="orb orb-two"></span>
-    <span class="orb orb-three"></span>
-  </div>
+  <main class="page">
+    <header class="intro">
+      <p class="project-label">WEB DEVELOPMENT INTERNSHIP PROJECT</p>
+      <h1>Connect Four</h1>
+      <p class="subtitle">A two-player browser game designed and developed with HTML, CSS and JavaScript.</p>
+    </header>
 
-  <main class="page-shell">
-    <section class="project-copy" aria-labelledby="project-title">
-      <p class="eyebrow"><span></span> Web Development Internship</p>
-      <h1 id="project-title">Smart<br><strong>Calculator</strong></h1>
-      <p class="description">
-        A clean and responsive calculator with keyboard controls, decimal support,
-        percentages, and safe error handling.
-      </p>
-
-      <ul class="feature-list" aria-label="Project features">
-        <li>Responsive interface</li>
-        <li>Keyboard enabled</li>
-        <li>Error handling</li>
-      </ul>
-
-      <div class="tech-stack" aria-label="Technologies used">
-        <span>HTML5</span>
-        <span>CSS3</span>
-        <span>JavaScript</span>
+    <section class="setup-card" aria-labelledby="setup-title">
+      <div>
+        <h2 id="setup-title">Match setup</h2>
+        <p>Choose player names and the number of rounds needed to win.</p>
       </div>
-
-      <p class="author">Designed &amp; developed by <strong>Kunal Sharma</strong></p>
+      <label>
+        Red player
+        <input id="player-one-name" type="text" value="Player 1" maxlength="12">
+      </label>
+      <label>
+        Yellow player
+        <input id="player-two-name" type="text" value="Player 2" maxlength="12">
+      </label>
+      <label>
+        First to
+        <select id="target-score">
+          <option value="1">1 win</option>
+          <option value="2" selected>2 wins</option>
+          <option value="3">3 wins</option>
+        </select>
+      </label>
+      <button id="start-match" class="button primary" type="button">Start Match</button>
     </section>
 
-    <section class="calculator-card" aria-label="Smart calculator">
-      <header class="calculator-header">
-        <div class="window-controls" aria-hidden="true">
-          <span></span><span></span><span></span>
+    <section class="game-card" aria-labelledby="game-status">
+      <div class="scoreboard">
+        <div class="player player-one">
+          <span class="small-disc red" aria-hidden="true"></span>
+          <div>
+            <span id="player-one-label">Player 1</span>
+            <strong id="player-one-score">0</strong>
+          </div>
         </div>
-        <p>calculator.js</p>
-        <span class="status"><i></i> Online</span>
-      </header>
 
-      <div class="display" aria-live="polite" aria-atomic="true">
-        <p class="calculation" id="calculation">Ready</p>
-        <output class="result" id="result">0</output>
+        <p id="game-status" class="status" aria-live="polite">Player 1's turn</p>
+
+        <div class="player player-two">
+          <div>
+            <span id="player-two-label">Player 2</span>
+            <strong id="player-two-score">0</strong>
+          </div>
+          <span class="small-disc yellow" aria-hidden="true"></span>
+        </div>
       </div>
 
-      <div class="keypad">
-        <button class="key utility" type="button" data-action="clear" title="Clear calculator">AC</button>
-        <button class="key utility" type="button" data-action="delete" aria-label="Delete last digit" title="Delete last digit">DEL</button>
-        <button class="key utility" type="button" data-action="percent" aria-label="Percentage" title="Percentage">%</button>
-        <button class="key operator" type="button" data-operation="/" aria-label="Divide" title="Divide">÷</button>
-
-        <button class="key" type="button" data-number="7">7</button>
-        <button class="key" type="button" data-number="8">8</button>
-        <button class="key" type="button" data-number="9">9</button>
-        <button class="key operator" type="button" data-operation="*" aria-label="Multiply" title="Multiply">×</button>
-
-        <button class="key" type="button" data-number="4">4</button>
-        <button class="key" type="button" data-number="5">5</button>
-        <button class="key" type="button" data-number="6">6</button>
-        <button class="key operator" type="button" data-operation="-" aria-label="Subtract" title="Subtract">−</button>
-
-        <button class="key" type="button" data-number="1">1</button>
-        <button class="key" type="button" data-number="2">2</button>
-        <button class="key" type="button" data-number="3">3</button>
-        <button class="key operator" type="button" data-operation="+" aria-label="Add" title="Add">+</button>
-
-        <button class="key utility" type="button" data-action="sign" aria-label="Change number sign" title="Change number sign">±</button>
-        <button class="key" type="button" data-number="0">0</button>
-        <button class="key" type="button" data-number="." aria-label="Decimal point">.</button>
-        <button class="key equals" id="equals-button" type="button" data-action="calculate" aria-label="Calculate answer" title="Calculate answer">=</button>
+      <div class="game-details">
+        <p class="board-help">Click any column to drop your disc</p>
+        <p>Moves: <strong id="move-count">0</strong></p>
       </div>
+      <div id="game-board" class="board" role="grid" aria-label="Connect Four game board"></div>
 
-      <p class="keyboard-tip"><kbd>Enter</kbd> calculates &nbsp;•&nbsp; <kbd>Esc</kbd> clears</p>
+      <div class="controls">
+        <button id="undo-move" class="button secondary" type="button">Undo Move</button>
+        <button id="restart-round" class="button primary" type="button">Restart Round</button>
+        <button id="new-game" class="button secondary" type="button">New Game</button>
+      </div>
+    </section>
+
+    <section class="history-card" aria-labelledby="history-title">
+      <div>
+        <h2 id="history-title">Round history</h2>
+        <p>Results from the current match appear here.</p>
+      </div>
+      <ol id="round-history" class="round-history">
+        <li class="empty-history">No rounds completed yet.</li>
+      </ol>
+    </section>
+
+    <section class="info-section">
+      <div>
+        <h2>How to play</h2>
+        <ol>
+          <li>Players take turns dropping one disc into a column.</li>
+          <li>The disc falls into the lowest empty space.</li>
+          <li>Connect four discs horizontally, vertically or diagonally to win.</li>
+        </ol>
+      </div>
+      <div>
+        <h2>About this project</h2>
+        <p>This project uses two-dimensional arrays, DOM events and game-state logic. It was created to practise front-end development through a small interactive application.</p>
+      </div>
     </section>
   </main>
+
+  <footer>
+    <p>Developed by Kunal Sharma as a web development internship project.</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>

@@ -1,243 +1,233 @@
-const resultDisplay = document.querySelector("#result");
-const calculationDisplay = document.querySelector("#calculation");
-const keypad = document.querySelector(".keypad");
+const ROWS = 6;
+const COLUMNS = 7;
 
-const MAX_INPUT_LENGTH = 14;
-const operatorSymbols = {
-  "+": "+",
-  "-": "−",
-  "*": "×",
-  "/": "÷"
-};
+const boardElement = document.getElementById('game-board');
+const statusElement = document.getElementById('game-status');
+const moveCountElement = document.getElementById('move-count');
+const playerOneScoreElement = document.getElementById('player-one-score');
+const playerTwoScoreElement = document.getElementById('player-two-score');
+const playerOneLabel = document.getElementById('player-one-label');
+const playerTwoLabel = document.getElementById('player-two-label');
+const playerOneInput = document.getElementById('player-one-name');
+const playerTwoInput = document.getElementById('player-two-name');
+const targetScoreInput = document.getElementById('target-score');
+const historyElement = document.getElementById('round-history');
+const startMatchButton = document.getElementById('start-match');
+const undoButton = document.getElementById('undo-move');
+const restartButton = document.getElementById('restart-round');
+const newGameButton = document.getElementById('new-game');
 
-let currentInput = "0";
-let firstOperand = null;
-let operator = null;
-let waitingForSecondOperand = false;
-let calculationText = "Ready";
+let board = [];
+let currentPlayer = 1;
+let roundFinished = false;
+let matchFinished = false;
+let moves = [];
+let roundNumber = 1;
+let scores = { 1: 0, 2: 0 };
+let playerNames = { 1: 'Player 1', 2: 'Player 2' };
+let targetScore = 2;
 
-function formatForDisplay(value) {
-  if (value === "Error") return value;
-  if (value.toLowerCase().includes("e")) return value;
+function createBoard() {
+  board = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(0));
+  boardElement.innerHTML = '';
+  moves = [];
+  updateMoveCount();
 
-  const [integerPart, decimalPart] = value.split(".");
-  const formattedInteger = Number(integerPart).toLocaleString("en-US");
-  return decimalPart === undefined
-    ? formattedInteger
-    : `${formattedInteger}.${decimalPart}`;
-}
-
-function updateDisplay() {
-  resultDisplay.textContent = formatForDisplay(currentInput);
-  calculationDisplay.textContent = calculationText;
-}
-
-function resetAfterError() {
-  if (currentInput !== "Error") return;
-  currentInput = "0";
-  calculationText = "Ready";
-}
-
-function inputNumber(value) {
-  resetAfterError();
-
-  if (value === ".") {
-    inputDecimal();
-    return;
-  }
-
-  if (waitingForSecondOperand) {
-    currentInput = value;
-    waitingForSecondOperand = false;
-    return;
-  }
-
-  const digitCount = currentInput.replace(/[-.]/g, "").length;
-  if (digitCount >= MAX_INPUT_LENGTH) return;
-
-  currentInput = currentInput === "0" ? value : currentInput + value;
-}
-
-function inputDecimal() {
-  resetAfterError();
-
-  if (waitingForSecondOperand) {
-    currentInput = "0.";
-    waitingForSecondOperand = false;
-    return;
-  }
-
-  if (!currentInput.includes(".")) currentInput += ".";
-}
-
-function calculate(left, right, selectedOperator) {
-  let answer;
-
-  switch (selectedOperator) {
-    case "+":
-      answer = left + right;
-      break;
-    case "-":
-      answer = left - right;
-      break;
-    case "*":
-      answer = left * right;
-      break;
-    case "/":
-      if (right === 0) return null;
-      answer = left / right;
-      break;
-    default:
-      return right;
-  }
-
-  if (!Number.isFinite(answer)) return null;
-  return Number.parseFloat(answer.toPrecision(12));
-}
-
-function showError(message) {
-  currentInput = "Error";
-  calculationText = message;
-  firstOperand = null;
-  operator = null;
-  waitingForSecondOperand = true;
-}
-
-function chooseOperation(nextOperator) {
-  resetAfterError();
-  const inputValue = Number.parseFloat(currentInput);
-
-  if (operator && waitingForSecondOperand) {
-    operator = nextOperator;
-    calculationText = `${formatForDisplay(String(firstOperand))} ${operatorSymbols[operator]}`;
-    return;
-  }
-
-  if (firstOperand === null) {
-    firstOperand = inputValue;
-  } else if (operator) {
-    const answer = calculate(firstOperand, inputValue, operator);
-    if (answer === null) {
-      showError("Cannot divide by zero");
-      return;
+  for (let row = 0; row < ROWS; row++) {
+    for (let column = 0; column < COLUMNS; column++) {
+      const cell = document.createElement('button');
+      cell.className = 'cell';
+      cell.type = 'button';
+      cell.dataset.row = row;
+      cell.dataset.column = column;
+      cell.setAttribute('role', 'gridcell');
+      cell.setAttribute('aria-label', `Empty space at row ${row + 1}, column ${column + 1}`);
+      cell.addEventListener('click', handleColumnClick);
+      boardElement.appendChild(cell);
     }
-    currentInput = String(answer);
-    firstOperand = answer;
   }
-
-  operator = nextOperator;
-  waitingForSecondOperand = true;
-  calculationText = `${formatForDisplay(String(firstOperand))} ${operatorSymbols[operator]}`;
 }
 
-function showResult() {
-  if (!operator || waitingForSecondOperand || currentInput === "Error") return;
+function handleColumnClick(event) {
+  if (roundFinished || matchFinished) return;
 
-  const secondOperand = Number.parseFloat(currentInput);
-  const expression = `${formatForDisplay(String(firstOperand))} ${operatorSymbols[operator]} ${formatForDisplay(String(secondOperand))} =`;
-  const answer = calculate(firstOperand, secondOperand, operator);
+  const column = Number(event.currentTarget.dataset.column);
+  const emptyRow = findEmptyRow(column);
 
-  if (answer === null) {
-    showError("Cannot divide by zero");
+  if (emptyRow === -1) {
+    statusElement.textContent = 'That column is full';
     return;
   }
 
-  currentInput = String(answer);
-  calculationText = expression;
-  firstOperand = null;
-  operator = null;
-  waitingForSecondOperand = true;
+  board[emptyRow][column] = currentPlayer;
+  moves.push({ row: emptyRow, column, player: currentPlayer });
+  updateCell(emptyRow, column, currentPlayer);
+  updateMoveCount();
+
+  const winningCells = findWinningCells(emptyRow, column, currentPlayer);
+
+  if (winningCells.length === 4) {
+    finishRound(winningCells);
+    return;
+  }
+
+  if (isBoardFull()) {
+    roundFinished = true;
+    statusElement.textContent = "It's a draw!";
+    addHistory(`Round ${roundNumber}: Draw`);
+    roundNumber += 1;
+    return;
+  }
+
+  currentPlayer = currentPlayer === 1 ? 2 : 1;
+  showCurrentTurn();
 }
 
-function clearCalculator() {
-  currentInput = "0";
-  firstOperand = null;
-  operator = null;
-  waitingForSecondOperand = false;
-  calculationText = "Ready";
+function findEmptyRow(column) {
+  for (let row = ROWS - 1; row >= 0; row--) {
+    if (board[row][column] === 0) return row;
+  }
+  return -1;
 }
 
-function deleteLastCharacter() {
-  if (waitingForSecondOperand || currentInput === "Error") return;
-  currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : "0";
-  if (currentInput === "-") currentInput = "0";
+function updateCell(row, column, player) {
+  const cell = getCell(row, column);
+  cell.classList.add(`player-${player}`);
+  cell.setAttribute('aria-label', `${playerNames[player]} disc at row ${row + 1}, column ${column + 1}`);
 }
 
-function applyPercentage() {
-  if (currentInput === "Error") return;
-  const originalValue = Number.parseFloat(currentInput);
-  currentInput = String(originalValue / 100);
-  waitingForSecondOperand = false;
-  calculationText = `${formatForDisplay(String(originalValue))}% =`;
+function getCell(row, column) {
+  return boardElement.querySelector(`[data-row="${row}"][data-column="${column}"]`);
 }
 
-function toggleSign() {
-  if (currentInput === "0" || currentInput === "Error") return;
-  currentInput = currentInput.startsWith("-")
-    ? currentInput.slice(1)
-    : `-${currentInput}`;
+function findWinningCells(row, column, player) {
+  const directions = [
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [1, -1]
+  ];
+
+  for (const [rowStep, columnStep] of directions) {
+    const line = [];
+    collectMatchingCells(line, row, column, -rowStep, -columnStep, player);
+    line.reverse();
+    line.push([row, column]);
+    collectMatchingCells(line, row, column, rowStep, columnStep, player);
+
+    if (line.length >= 4) return line.slice(0, 4);
+  }
+
+  return [];
 }
 
-function handleAction(action) {
-  switch (action) {
-    case "clear":
-      clearCalculator();
-      break;
-    case "delete":
-      deleteLastCharacter();
-      break;
-    case "percent":
-      applyPercentage();
-      break;
-    case "sign":
-      toggleSign();
-      break;
-    case "calculate":
-      showResult();
-      break;
+function collectMatchingCells(line, startRow, startColumn, rowStep, columnStep, player) {
+  let row = startRow + rowStep;
+  let column = startColumn + columnStep;
+
+  while (
+    row >= 0 && row < ROWS &&
+    column >= 0 && column < COLUMNS &&
+    board[row][column] === player
+  ) {
+    line.push([row, column]);
+    row += rowStep;
+    column += columnStep;
   }
 }
 
-function processButton(button) {
-  if (button.dataset.number !== undefined) {
-    inputNumber(button.dataset.number);
-  } else if (button.dataset.operation) {
-    chooseOperation(button.dataset.operation);
-  } else if (button.dataset.action) {
-    handleAction(button.dataset.action);
-  }
+function finishRound(winningCells) {
+  roundFinished = true;
+  scores[currentPlayer] += 1;
+  updateScores();
+  addHistory(`Round ${roundNumber}: ${playerNames[currentPlayer]} won`);
+  roundNumber += 1;
 
-  updateDisplay();
+  winningCells.forEach(([row, column]) => {
+    getCell(row, column).classList.add('winning');
+  });
+
+  if (scores[currentPlayer] === targetScore) {
+    matchFinished = true;
+    statusElement.textContent = `${playerNames[currentPlayer]} won the match!`;
+  } else {
+    statusElement.textContent = `${playerNames[currentPlayer]} wins the round!`;
+  }
 }
 
-keypad.addEventListener("click", (event) => {
-  const button = event.target.closest("button");
-  if (!button) return;
-  processButton(button);
-});
+function undoLastMove() {
+  if (roundFinished || matchFinished || moves.length === 0) return;
 
-document.addEventListener("keydown", (event) => {
-  let button;
+  const lastMove = moves.pop();
+  board[lastMove.row][lastMove.column] = 0;
+  const cell = getCell(lastMove.row, lastMove.column);
+  cell.classList.remove(`player-${lastMove.player}`);
+  cell.setAttribute('aria-label', `Empty space at row ${lastMove.row + 1}, column ${lastMove.column + 1}`);
+  currentPlayer = lastMove.player;
+  updateMoveCount();
+  showCurrentTurn();
+}
 
-  if (/^[0-9.]$/.test(event.key)) {
-    button = document.querySelector(`[data-number="${event.key}"]`);
-  } else if (["+", "-", "*", "/"].includes(event.key)) {
-    button = document.querySelector(`[data-operation="${event.key}"]`);
-  } else if (event.key === "Enter" || event.key === "=") {
-    button = document.querySelector('[data-action="calculate"]');
-  } else if (event.key === "Backspace") {
-    button = document.querySelector('[data-action="delete"]');
-  } else if (event.key === "Escape" || event.key === "Delete") {
-    button = document.querySelector('[data-action="clear"]');
-  } else if (event.key === "%") {
-    button = document.querySelector('[data-action="percent"]');
-  }
+function isBoardFull() {
+  return board[0].every(cell => cell !== 0);
+}
 
-  if (!button) return;
-  event.preventDefault();
-  processButton(button);
-  button.classList.add("is-pressed");
-  window.setTimeout(() => button.classList.remove("is-pressed"), 120);
-});
+function cleanName(value, fallback) {
+  const name = value.trim().replace(/\s+/g, ' ');
+  return name || fallback;
+}
 
-updateDisplay();
+function startMatch() {
+  playerNames[1] = cleanName(playerOneInput.value, 'Player 1');
+  playerNames[2] = cleanName(playerTwoInput.value, 'Player 2');
+  targetScore = Number(targetScoreInput.value);
+  playerOneLabel.textContent = playerNames[1];
+  playerTwoLabel.textContent = playerNames[2];
+  resetMatch();
+}
+
+function resetMatch() {
+  scores = { 1: 0, 2: 0 };
+  roundNumber = 1;
+  matchFinished = false;
+  historyElement.innerHTML = '<li class="empty-history">No rounds completed yet.</li>';
+  updateScores();
+  restartRound();
+}
+
+function updateScores() {
+  playerOneScoreElement.textContent = scores[1];
+  playerTwoScoreElement.textContent = scores[2];
+}
+
+function updateMoveCount() {
+  moveCountElement.textContent = moves.length;
+}
+
+function showCurrentTurn() {
+  statusElement.textContent = `${playerNames[currentPlayer]}'s turn`;
+}
+
+function addHistory(message) {
+  const emptyItem = historyElement.querySelector('.empty-history');
+  if (emptyItem) emptyItem.remove();
+
+  const item = document.createElement('li');
+  item.textContent = message;
+  historyElement.appendChild(item);
+}
+
+function restartRound() {
+  if (matchFinished) return;
+  currentPlayer = roundNumber % 2 === 0 ? 2 : 1;
+  roundFinished = false;
+  showCurrentTurn();
+  createBoard();
+}
+
+startMatchButton.addEventListener('click', startMatch);
+undoButton.addEventListener('click', undoLastMove);
+restartButton.addEventListener('click', restartRound);
+newGameButton.addEventListener('click', resetMatch);
+
+createBoard();
